@@ -68,7 +68,10 @@ func main() {
 	flag.Parse()
 
 	if _, err := os.Stat("show_data"); os.IsNotExist(err) {
-		os.Mkdir("show_data", 0755)
+		err = os.Mkdir("show_data", 0755)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	var provider shows.ShowProvider
