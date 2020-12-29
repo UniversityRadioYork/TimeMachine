@@ -10,8 +10,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/UniversityRadioYork/rewinder/recorder"
-	"github.com/UniversityRadioYork/rewinder/shows"
+	"github.com/UniversityRadioYork/time-machine/recorder"
+	"github.com/UniversityRadioYork/time-machine/shows"
 	"github.com/gorilla/mux"
 )
 
