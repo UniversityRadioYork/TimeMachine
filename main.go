@@ -10,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/UniversityRadioYork/myradio-go"
 	"github.com/UniversityRadioYork/time-machine/recorder"
 	"github.com/UniversityRadioYork/time-machine/shows"
 	"github.com/gorilla/mux"
@@ -59,6 +60,8 @@ func checkShowLoop(h *HandlerContext) {
 	}
 }
 
+const useMyRadio = false
+
 func main() {
 	port := flag.Int("port", 3958, "Port to listen on")
 
@@ -68,10 +71,22 @@ func main() {
 		os.Mkdir("show_data", 0755)
 	}
 
-	provider := shows.DummyShowProvider{}
+	var provider shows.ShowProvider
+	if useMyRadio {
+		myr, err := myradio.NewSessionFromKeyFile()
+		if err != nil {
+			log.Fatal(err)
+		}
+		provider, err = shows.NewMyRadioShowProvider(myr)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		provider = &shows.DummyShowProvider{}
+	}
 
 	h := HandlerContext{
-		ShowProvider: &provider,
+		ShowProvider: provider,
 	}
 
 	go checkShowLoop(&h)
