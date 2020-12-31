@@ -35,12 +35,14 @@
         <h1 class="show-name">URY</h1>
         <h2 class="show-date">Loading...</h2>
       </div>
-      <div id="audio-player-container">
+      <div id="audio-player-container" class="d-flex justify-content-left">
+        <div id="show-player-play" class="fa fa-play col-2"></div>
         <div class="d-flex justify-content-between timings">
           <span class="show-starttime"></span>
           <span class="playback-time"></span>
           <span class="show-endtime"></span>
         </div>
+      </div>
 
         <div class="background" style="background-color: black" title="This part of the show is yet to be broadcast.">
           <div class="audio-progress" id="audio-progress">
@@ -51,7 +53,6 @@
             </div>
           </div>
         </div>
-      </div>
       <div id="radioplayer" class="alert-danger p-3">
         <strong>This tool is currently only available for internal use due to URY's PPL licence. Please use RadioPlayer for regular listening.</strong><br />
         <a href="https://ury.org.uk/live" title="Go to live stream on RadioPlayer">
@@ -66,9 +67,6 @@
           <source id="audioSource" src="#" type="audio/mpeg">
             Your browser does not support the audio element.
         </audio>
-        <div id="show-player-play" class="fa fa-play col-2"></div>
-        <div id="show-player-text" class="col">LOADING STREAM</div>
-
       </div>
     </header>
   </div>
