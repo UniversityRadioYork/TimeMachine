@@ -1,5 +1,7 @@
 # URY Time Machine
 
+![URY Time Machine Show Logo](https://ury.org.uk/media/image_meta/ShowImageMetadata/288.jpeg "The Time Machine Show logo")
+
 This is The Time Machine, named after a (pretty good) show on URY! What does it do? It let's listeners rewind time, so they can listen back to an earlier part of the on air programme.
 
 ## Running It
