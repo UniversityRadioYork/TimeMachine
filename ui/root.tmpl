@@ -42,19 +42,20 @@
           <span class="show-endtime"></span>
         </div>
 
-        <div class="background" style="background-color: black" title="This part of the show is yet to broadcast.">
+        <div class="background" style="background-color: black" title="This part of the show is yet to be broadcast.">
           <div class="audio-progress" id="audio-progress">
-            <div id="draggable-point" style="left:0%;position:absolute;" class="draggable ui-widget-content">
+            <div id="draggable-point" style="left:0%;position:absolute;" class="draggable ui-widget-content" title="Drag to skip around the show.">
               <div id="audio-progress-handle"></div>
             </div>
-            <div id="audio-progress-bar" class="bar" style="width:0%">
+            <div id="audio-progress-bar" class="bar" style="width:0%" title="Click to jump to this part of the show.">
             </div>
           </div>
         </div>
       </div>
-      <div id="radioplayer" class="">
+      <div id="radioplayer" class="alert-danger p-3">
+        <strong>This tool is currently only available for internal use due to URY's PPL licence. Please use RadioPlayer for regular listening.</strong><br />
         <a href="https://ury.org.uk/live" title="Go to live stream on RadioPlayer">
-          <span class="btn btn-outline-light btn-lg">RadioPlayer</span>
+          <span class="btn">RadioPlayer</span>
         </a>
       </div>
       <div id="show-image">
