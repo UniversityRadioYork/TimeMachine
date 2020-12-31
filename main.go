@@ -10,9 +10,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/UniversityRadioYork/TimeMachine/recorder"
+	"github.com/UniversityRadioYork/TimeMachine/shows"
 	"github.com/UniversityRadioYork/myradio-go"
-	"github.com/UniversityRadioYork/time-machine/recorder"
-	"github.com/UniversityRadioYork/time-machine/shows"
 	"github.com/gorilla/mux"
 )
 

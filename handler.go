@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/UniversityRadioYork/time-machine/shows"
+	"github.com/UniversityRadioYork/TimeMachine/shows"
 	"github.com/gorilla/mux"
 	"github.com/tcolgate/mp3"
 )
