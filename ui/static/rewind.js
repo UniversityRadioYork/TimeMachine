@@ -118,7 +118,7 @@ var seekToProgress = function(offset, startPlaying = true) {
   var audio = document.getElementById('audio');
 
   var source = document.getElementById('audioSource');
-  source.src = "http://192.168.0.78:3958/tm/v1/show/" + startTimeEpoch + "/stream?offset=" + offset
+  source.src = "tm/v1/show/" + startTimeEpoch + "/stream?offset=" + offset
 
   audio.load(); //call this to just preload the audio without playing
 
