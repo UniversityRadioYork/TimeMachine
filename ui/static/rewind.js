@@ -15,7 +15,7 @@ xmlhttp.onreadystatechange = function() {
             // If the current show has no start time (jukebox/off air), allow seek to beginning of hour.
             if (!currentShow.start_time) {
               var start_time = new Date();
-              start_time.setHours(start_time.getHours() - 1)
+              start_time.setHours(start_time.getHours())
               start_time.setMinutes(0);
               start_time.setSeconds(0);
               currentShow.start_time = start_time.getTime() / 1000;
@@ -28,7 +28,7 @@ xmlhttp.onreadystatechange = function() {
               currentShow.end_time = end_time.getTime() / 1000;
             }
 
-            startTimeEpoch = 447045;//Math.round(currentShow.start_time / (60*60));
+            startTimeEpoch = Math.round(currentShow.start_time / (60*60));
 
 
             const secondsSinceEpoch = Math.round(Date.now() / 1000)
