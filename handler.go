@@ -157,11 +157,9 @@ func (h *HandlerContext) HandleGetShowStream(w http.ResponseWriter, r *http.Requ
 	w.Header().Set("Accept-Ranges", "none")
 	w.Header().Del("Content-Length")
 	w.Header().Set("Cache-Control", "no-cache, no-store")
-	for {
-		_, err = io.Copy(w, showFile)
-		if err != nil {
-			log.Printf("handler: io.Copy error %v\n", err)
-			return
-		}
+	_, err = io.Copy(w, showFile)
+	if err != nil {
+		log.Printf("handler: io.Copy error %v\n", err)
+		return
 	}
 }
