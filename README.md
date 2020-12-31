@@ -6,7 +6,7 @@ This is The Time Machine, named after a (pretty good) show on URY! What does it 
 
 ## Running It
 
-To install the bits you need, `go get`. Usual folder structures of Go apply. You'll then want to make sure you've setup https://github.com/UniversityRadioYork/myradio-go before continuing.
+To install the bits you need, `go get`. Usual folder structures of Go apply. You'll then want to make sure you've setup https://github.com/UniversityRadioYork/myradio-go before continuing. (Basically, create a file called `.myradio.key` containing an API key.)
 
 To build the Time Machine, run `go build`.
 
