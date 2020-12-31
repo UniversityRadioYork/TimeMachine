@@ -96,11 +96,19 @@ func main() {
 
 	r := mux.NewRouter()
 
+	r.HandleFunc("/", h.HandleUIRoot)
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("ui/static"))))
 	r.HandleFunc("/tm/v1/show/{id}", h.HandleGetShow)
 	r.HandleFunc("/tm/v1/show/{id}/stream", h.HandleGetShowStream)
 
-	http.Handle("/", r)
+	srv := &http.Server{
+		Handler: r,
+		Addr:    fmt.Sprintf("0.0.0.0:%d", *port),
+		// Good practice: enforce timeouts for servers you create!
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
 
 	log.Printf("Listening on %d\n", *port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", *port), nil))
+	log.Fatal(srv.ListenAndServe())
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io"
 	"log"
 	"math"
@@ -18,6 +19,21 @@ import (
 
 type HandlerContext struct {
 	ShowProvider shows.ShowProvider
+}
+
+type PageData struct {
+	PageTitle string
+	APIKey    string
+}
+
+func (h *HandlerContext) HandleUIRoot(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("ui/root.tmpl"))
+	data := PageData{
+		PageTitle: "URYPlayer Rewind",
+		APIKey:    "rewind",
+	}
+	tmpl.Execute(w, data)
+
 }
 
 func (h *HandlerContext) HandleGetShow(w http.ResponseWriter, r *http.Request) {
