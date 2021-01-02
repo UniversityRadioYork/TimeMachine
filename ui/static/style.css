@@ -126,27 +126,31 @@ a .stream-list-row{
 }
 
 #audio-player-container {
-  border-left: white 5px solid;
-  border-right: black 5px solid;
   background: rgba(0,0,0,0.5);
 }
+.timings {
+  width: 100%;
+}
 .timings span {
-  padding: 10px 10px;
+  padding: 15px 20px;
 }
 
 .show-starttime {
 
 }
 .timings .playback-time {
-  background-color: #E95F74;
-  padding: 10px 30px;
+  background-color: white;
+  color: #E95F74;
+  padding: 14px 30px;
+  font-size: 1.15em;
+  font-weight: bold;
 }
 
 #show-player-play {
   vertical-align: middle;
   align-items: center;
   text-align: center;
-  background: #001933;
+  background: #E95F74;
   padding: 10px;
   font-size: 35px;
   text-align: center;
