@@ -20,42 +20,48 @@ var rec *recorder.IcecastPullRecorder
 
 func checkShowLoop(h *HandlerContext) {
 	attempt := 0
+	lastMinute := -1
 	var currentShow shows.Show
 	ctx := context.Background()
 	var cancelRec context.CancelFunc
 	for {
-		show, err := h.ShowProvider.GetCurrentShow()
-		if err != nil {
-			attempt++
-			if attempt == 5 {
-				panic(err)
-			} else {
-				continue
-			}
-		}
-		attempt = 0
-		if currentShow.ID != show.ID {
-			// Cancel the current recording and start a new one
-			if cancelRec != nil {
-				cancelRec()
-			}
-			log.Printf("starting to record show %d\n", show.ID)
-			newRec, err := recorder.NewIcecastPullRecorder("https://audio.ury.org.uk/live-high", show.ID)
+		_, minutes, _ := time.Now().Clock()
+		if minutes != lastMinute {
+			lastMinute = minutes
+			show, err := h.ShowProvider.GetCurrentShow()
 			if err != nil {
-				panic(err)
+				attempt++
+				if attempt == 5 {
+					panic(err)
+				} else {
+					continue
+				}
 			}
-			rec = newRec
-			// Create a new cancel context
-			var recCtx context.Context
-			recCtx, cancelRec = context.WithCancel(ctx)
-			go func() {
-				recErr := rec.Record(recCtx)
-				if recErr != nil && !errors.Is(recErr, context.Canceled) {
+			attempt = 0
+			if currentShow.ID != show.ID {
+				// Cancel the current recording and start a new one
+				if cancelRec != nil {
+					cancelRec()
+				}
+				log.Printf("starting to record show %d\n", show.ID)
+				newRec, err := recorder.NewIcecastPullRecorder("https://audio.ury.org.uk/live-high", show.ID)
+				if err != nil {
 					panic(err)
 				}
-			}()
-			currentShow = *show
+				rec = newRec
+				// Create a new cancel context
+				var recCtx context.Context
+				recCtx, cancelRec = context.WithCancel(ctx)
+				go func() {
+					recErr := rec.Record(recCtx)
+					if recErr != nil && !errors.Is(recErr, context.Canceled) {
+						panic(err)
+					}
+				}()
+				currentShow = *show
+			}
 		}
+
 		time.Sleep(1 * time.Second)
 	}
 }
