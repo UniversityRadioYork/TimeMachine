@@ -83,7 +83,7 @@ var requestShowTM = function() {
         var playableSecs = obj.Playable
         console.log("PlayableSeconds", playableSecs)
         var now = new Date();
-        recordingStartTime = new Date(now.getTime() - playableSecs*1000)
+        recordingStartTime = new Date(Math.min(now.getTime(),showEndTime.getTime()) - playableSecs*1000)
         if (recordingStartTime.getTime() < showStartTime.getTime()) {
           // If timemachine is telling us it has more audio than is sensitible, let's correct it.
           recordingStartTime = showStartTime
@@ -115,7 +115,7 @@ requestShowInfo()
 var showElapsedPercent = function() {
   var now = new Date();
 
-  return ((now.getTime() - showStartTime.getTime()) / showDurationMs) * 100
+  return ((Math.min(now.getTime(),showEndTime.getTime()) - showStartTime.getTime()) / showDurationMs) * 100
 }
 
 var player = document.getElementById('audio');
@@ -134,7 +134,7 @@ player.addEventListener("timeupdate", function() {
   );
 
   var now = new Date();
-  var percent = (playerTime().getTime() - recordingStartTime.getTime()) / (now.getTime() - recordingStartTime.getTime())*100
+  var percent = (playerTime().getTime() - recordingStartTime.getTime()) / (Math.min(now.getTime(),showEndTime.getTime()) - recordingStartTime.getTime())*100
     $('#audio-progress-bar').css({
       'width': percent + "%"
     });
@@ -210,7 +210,7 @@ $('#audio-progress').click(function(e) {
   console.log("Requested %", requested_percent)
 
   var now = new Date();
-  var recordingDurationS = (now.getTime() - recordingStartTime.getTime())/1000
+  var recordingDurationS = (Math.min(now.getTime(),showEndTime.getTime()) - recordingStartTime.getTime())/1000
   offset = requested_percent/100*(recordingDurationS)
   console.log(offset)
   seekToProgress(offset)
@@ -234,7 +234,7 @@ $('#draggable-point').draggable({
     console.log("Requested percent", requested_percent)
 
     var now = new Date();
-    var recordingDurationS = (now.getTime() - recordingStartTime.getTime())/1000
+    var recordingDurationS = (Math.min(now.getTime(),showEndTime.getTime()) - recordingStartTime.getTime())/1000
     offset = requested_percent/100*(recordingDurationS)
 
     //console.log("percent through show", percent_through_show)
