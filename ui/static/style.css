@@ -88,6 +88,7 @@ a .stream-list-row{
   height: 0.8rem;
   width: 100%;
   background-color: #C0C0C0;
+  position: relative;
 }
 .audio-progress .bar {
   height: 100%;
