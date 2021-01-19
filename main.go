@@ -8,6 +8,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
+	"sort"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/UniversityRadioYork/TimeMachine/recorder"
@@ -69,6 +73,56 @@ func checkShowLoop(h *HandlerContext) {
 					}
 				}()
 				currentShow = *show
+
+				// Right, now we've started a new recording, let's tidy up any old ones.
+
+				// First, let's get a list of all of the files in the show_data directory.
+				var files []string
+				root := "show_data/"
+				err = filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+					files = append(files, path)
+					return nil
+				})
+				if err != nil {
+					panic(err)
+				}
+
+				// For each of the two recording types we're interested in, make a list of their numbers.
+				var slotTypes = []string{"timeslotid", "hour"}
+				for _, slotType := range slotTypes {
+
+					var fileNumbers []int
+					for _, file := range files {
+						res1 := strings.Split(file, "-")
+						if len(res1) == 2 && root+slotType == res1[0] {
+							numberStr := strings.Split(res1[1], ".")[0]
+							var number int
+							number, err = strconv.Atoi(numberStr)
+							if err == nil {
+								fileNumbers = append(fileNumbers, number)
+							}
+
+						}
+					}
+
+					// Now sort these numbers in incrementing order (oldest files first)
+					sort.Ints(fileNumbers)
+
+					// Now take all but the newest two (for current and previous show)
+					// And delete the rest.
+					if len(fileNumbers) > 2 {
+						fileNumbersToRemove := fileNumbers[:len(fileNumbers)-2]
+
+						for _, fileNumber := range fileNumbersToRemove {
+							filename := fmt.Sprintf("show_data/%s-%d.mp3", slotType, fileNumber)
+							fmt.Println("Removing old file: " + filename)
+							e := os.Remove(filename)
+							if e != nil {
+								log.Fatal(e)
+							}
+						}
+					}
+				}
 			}
 		}
 
