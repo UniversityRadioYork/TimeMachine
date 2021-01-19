@@ -16,18 +16,20 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const SECONDS_IN_HOUR = 60 * 60
+
 var rec *recorder.IcecastPullRecorder
 
 func checkShowLoop(h *HandlerContext) {
 	attempt := 0
-	lastMinute := -1
+	lastHour := -1
 	var currentShow shows.Show
 	ctx := context.Background()
 	var cancelRec context.CancelFunc
 	for {
-		_, minutes, _ := time.Now().Clock()
-		if minutes != lastMinute {
-			lastMinute = minutes
+		hours, _, _ := time.Now().Clock()
+		if hours != lastHour {
+			lastHour = hours
 			show, err := h.ShowProvider.GetCurrentShow()
 			if err != nil {
 				attempt++
@@ -38,13 +40,21 @@ func checkShowLoop(h *HandlerContext) {
 				}
 			}
 			attempt = 0
-			if currentShow.ID != show.ID {
+			if currentShow.StartTime != show.StartTime {
 				// Cancel the current recording and start a new one
 				if cancelRec != nil {
 					cancelRec()
 				}
-				log.Printf("starting to record show %d\n", show.ID)
-				newRec, err := recorder.NewIcecastPullRecorder("https://audio.ury.org.uk/live-high", show.ID)
+				var filename string
+
+				if show.ID != 0 {
+					filename = "timeslotid-" + fmt.Sprint(show.ID)
+				} else {
+					filename = "hour-" + fmt.Sprint(show.StartTime.Unix()/SECONDS_IN_HOUR)
+				}
+				log.Printf("starting to record show: %s\n", filename)
+
+				newRec, err := recorder.NewIcecastPullRecorder("https://audio.ury.org.uk/live-high", filename)
 				if err != nil {
 					panic(err)
 				}
@@ -66,7 +76,7 @@ func checkShowLoop(h *HandlerContext) {
 	}
 }
 
-const useMyRadio = false
+const useMyRadio = true
 
 func main() {
 	port := flag.Int("port", 3958, "Port to listen on")
@@ -104,8 +114,8 @@ func main() {
 
 	r.HandleFunc("/", h.HandleUIRoot)
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("ui/static"))))
-	r.HandleFunc("/tm/v1/show/{id}", h.HandleGetShow)
-	r.HandleFunc("/tm/v1/show/{id}/stream", h.HandleGetShowStream)
+	r.HandleFunc("/tm/v1/show/{startTime}", h.HandleGetShow)
+	r.HandleFunc("/tm/v1/show/{startTime}/stream", h.HandleGetShowStream)
 
 	srv := &http.Server{
 		Handler: r,

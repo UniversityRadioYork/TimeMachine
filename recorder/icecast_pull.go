@@ -10,11 +10,11 @@ import (
 
 type IcecastPullRecorder struct {
 	Source string
-	ShowID uint
+	ShowID string
 	client *http.Client
 }
 
-func NewIcecastPullRecorder(source string, id uint) (*IcecastPullRecorder, error) {
+func NewIcecastPullRecorder(source string, id string) (*IcecastPullRecorder, error) {
 	return &IcecastPullRecorder{
 		Source: source,
 		ShowID: id,
@@ -23,7 +23,7 @@ func NewIcecastPullRecorder(source string, id uint) (*IcecastPullRecorder, error
 }
 
 func (i *IcecastPullRecorder) Record(ctx context.Context) error {
-	outFile, err := os.OpenFile(fmt.Sprintf("show_data/%d.mp3", i.ShowID), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	outFile, err := os.OpenFile(fmt.Sprintf("show_data/%s.mp3", i.ShowID), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return err
 	}

@@ -38,18 +38,18 @@ func (h *HandlerContext) HandleUIRoot(w http.ResponseWriter, r *http.Request) {
 
 func (h *HandlerContext) HandleGetShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, err := strconv.ParseUint(vars["id"], 10, 32)
+	startTime, err := strconv.ParseUint(vars["startTime"], 10, 32) // In hours since epoch
 	if err != nil {
 		w.WriteHeader(400)
-		w.Write([]byte("TM001 invalid id"))
+		w.Write([]byte("TM001 invalid startTime"))
 		return
 	}
 
-	show, err := h.ShowProvider.GetShow(uint(id))
+	show, err := h.ShowProvider.GetShow(uint(startTime))
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(500)
-		w.Write([]byte("TM510 something exploded!"))
+		w.Write([]byte("TM501 something exploded!"))
 		return
 	}
 
@@ -58,7 +58,14 @@ func (h *HandlerContext) HandleGetShow(w http.ResponseWriter, r *http.Request) {
 
 	var playable float64
 	if available {
-		file, err := os.Open(fmt.Sprintf("show_data/%d.mp3", show.ID))
+		var filename string
+		if show.ID != 0 {
+			filename = "timeslotid-" + fmt.Sprint(show.ID)
+		} else {
+			filename = "hour-" + fmt.Sprint(show.StartTime.Unix()/SECONDS_IN_HOUR)
+		}
+
+		file, err := os.Open(fmt.Sprintf("show_data/%s.mp3", filename))
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(500)
@@ -99,14 +106,14 @@ func (h *HandlerContext) HandleGetShow(w http.ResponseWriter, r *http.Request) {
 
 func (h *HandlerContext) HandleGetShowStream(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, err := strconv.ParseUint(vars["id"], 10, 32)
+	startTime, err := strconv.ParseUint(vars["startTime"], 10, 32) // In hours since epoch
 	if err != nil {
 		w.WriteHeader(400)
-		w.Write([]byte("TM001 invalid id"))
+		w.Write([]byte("TM001 invalid startTime"))
 		return
 	}
 
-	show, err := h.ShowProvider.GetShow(uint(id))
+	show, err := h.ShowProvider.GetShow(uint(startTime))
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(500)
@@ -131,7 +138,14 @@ func (h *HandlerContext) HandleGetShowStream(w http.ResponseWriter, r *http.Requ
 		}
 	}
 
-	showFile, err := os.OpenFile(fmt.Sprintf("show_data/%d.mp3", show.ID), os.O_RDONLY, 0)
+	var filename string
+	if show.ID != 0 {
+		filename = "timeslotid-" + fmt.Sprint(show.ID)
+	} else {
+		filename = "hour-" + fmt.Sprint(show.StartTime.Unix()/SECONDS_IN_HOUR)
+	}
+
+	showFile, err := os.OpenFile(fmt.Sprintf("show_data/%s.mp3", filename), os.O_RDONLY, 0)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(500)
