@@ -187,9 +187,33 @@ func (h *HandlerContext) HandleGetShowStream(w http.ResponseWriter, r *http.Requ
 	w.Header().Set("Accept-Ranges", "none")
 	w.Header().Del("Content-Length")
 	w.Header().Set("Cache-Control", "no-cache, no-store")
-	_, err = io.Copy(w, showFile)
-	if err != nil {
-		log.Printf("handler: io.Copy error %v\n", err)
-		return
+
+	BUFFERSIZE := 1024
+	buf := make([]byte, BUFFERSIZE)
+	attempt := 0
+	for {
+		n, err := showFile.Read(buf)
+		if err != nil && err != io.EOF {
+			return //err
+		}
+		if n == 0 {
+			// There's no new bytes now, but there be some new
+			if attempt > 4 {
+				// Attempts to get new bytes from the file failed.
+				// Likely means the recording has finished.
+				fmt.Println("Reached end of recording.")
+				return
+			}
+
+			attempt = attempt + 1
+			time.Sleep(1 * time.Second)
+			continue
+		}
+
+		if _, err := w.Write(buf[:n]); err != nil {
+			fmt.Println("Client probably went away")
+			return
+		}
+		attempt = 0
 	}
 }
