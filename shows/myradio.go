@@ -39,12 +39,12 @@ func (m *MyRadioShowProvider) GetCurrentShow() (*Show, error) {
 
 func (m *MyRadioShowProvider) GetShow(startTime uint) (*Show, error) {
 	unix := startTime * SECONDS_IN_HOUR
-	ts, err := m.s.GetCurrentTimeslotAtTime(int(unix)) //.GetTimeslot(int(startTime))
+	ts, err := m.s.GetCurrentTimeslotAtTime(int(unix) + 1) // Add 1 sec so the API doesn't return the last show
 
 	showTime := time.Unix(int64(unix), 0)
 	if err != nil {
 		// I don't like this
-		if strings.Contains(err.Error(), "HTTP 400") {
+		if strings.Contains(err.Error(), "cannot parse \"\"") {
 			// There's no show here. Return a hourly chunk
 			return &Show{
 				ID:        uint(0),

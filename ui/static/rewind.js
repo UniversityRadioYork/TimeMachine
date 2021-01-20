@@ -31,22 +31,21 @@ var requestAPI = function(endpoint, readyfunction) {
 
 var requestShowInfo = function() {
   requestAPI('https://ury.org.uk/api/v2/timeslot/currentandnext?api_key=' + window.APIKey, (obj) => {
-    if (!obj.payload) {
+    if (!obj || !obj.payload) {
       console.log("RIP! API failed.")
       return
     }
     var payload = obj.payload;
     var currentShow = payload.current;
-
-    // If the current show has no start time (jukebox/off air), allow seek to beginning of hour.
-    if (!currentShow.start_time) {
+    // If the current show has no start time/id (jukebox/off air), allow seek to beginning of hour.
+    if (!currentShow.start_time || !currentShow.id) {
       var start_time = new Date();
       start_time.setHours(start_time.getHours())
       start_time.setMinutes(0);
       start_time.setSeconds(0);
       currentShow.start_time = start_time.getTime() / 1000;
     }
-    if (isNaN(currentShow.end_time)) {
+    if (isNaN(currentShow.end_time) || !currentShow.id) {
       var end_time = new Date();
       end_time.setHours(end_time.getHours() + 1)
       end_time.setMinutes(0);
