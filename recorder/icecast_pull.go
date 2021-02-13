@@ -27,6 +27,7 @@ func (i *IcecastPullRecorder) Record(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	defer outFile.Close()
 	req, err := http.NewRequest("GET", i.Source, nil)
 	if err != nil {
 		return err
