@@ -1,5 +1,5 @@
-github.com/UniversityRadioYork/myradio-go v0.0.0-20200731141011-2b440aa3d19d h1:bWcEhoHi/00lAUgFT/t/xe/zEdBR1Cv19BqjWOmrGlE=
-github.com/UniversityRadioYork/myradio-go v0.0.0-20200731141011-2b440aa3d19d/go.mod h1:AExn0Mv9pnne+nsyYMu1jpPdSRq3VG4y3GFtCfRNJ5Y=
+github.com/UniversityRadioYork/myradio-go v0.0.0-20210215224935-d88a7c80bfff h1:9a8Sid4yAYQwi7eNB294ZsuDY4j6CGPNbOkFuR33crA=
+github.com/UniversityRadioYork/myradio-go v0.0.0-20210215224935-d88a7c80bfff/go.mod h1:iFH6u3KFaQ73MR9bfqTThGd7TFUYUe9cAajxxh9E0Z8=
 github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
 github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
 github.com/tcolgate/mp3 v0.0.0-20170426193717-e79c5a46d300 h1:XQdibLKagjdevRB6vAjVY4qbSr8rQ610YzTkWcxzxSI=
