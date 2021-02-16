@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{{.PageTitle}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="static/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="static/style.css">
+  </head>
+  <body class="full-player">
+
+  <nav class="navbar navbar-toggleable bg-faded navbar-inverse">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="/" alt="University Radio York Homepage">
+      <img src="static/logo-homepage.png" height="34" alt="University Radio York Logo">
+    </a>
+    <!-- <span class="navbar-brand divider"></span> -->
+    <a class="navbar-brand" href="/live" alt="<?php echo($player_name); ?>">
+      <img src="static/logo-player.png" height="34" alt="URY Player Logo">
+    </a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+      </ul>
+      <div class="my-2 my-lg-0">
+        <div id="navbar-slogan">On Air | <strong>Online</strong> | On Tap</div>
+    </div>
+  </nav>
+
+	<div class="container">
+		<span>You're listening to...</span>
+    <header id="stream-available">
+      <div id="show-title">
+        <h1 class="show-name">URY</h1>
+        <h2 class="show-date">Loading...</h2>
+      </div>
+      <div id="audio-player-container" class="d-flex justify-content-left">
+        <div id="show-player-play" class="fa fa-play col-2"></div>
+        <div class="d-flex justify-content-between timings">
+          <span class="show-starttime"></span>
+          <span class="playback-time"></span>
+          <span class="show-endtime"></span>
+        </div>
+      </div>
+
+        <div class="background" style="background-color: black" title="This part of the show is unavailable for live rewind.">
+          <div class="audio-progress" id="audio-progress" title="Click to jump to this part of the show.">
+            <div id="draggable-point" style="left:0%;position:absolute;" class="draggable ui-widget-content" title="Drag to skip around the show.">
+              <div id="audio-progress-handle"></div>
+            </div>
+            <div id="audio-progress-bar" class="bar" style="width:0%">
+            </div>
+          </div>
+        </div>
+      <div id="radioplayer" class="alert-danger p-3">
+        <strong>
+          This tool is currently only available for internal use due to URY's PPL licence.
+          Please use <a href="https://ury.org.uk/live" title="URY RadioPlayer">RadioPlayer</a> for regular listening.
+        </strong>
+      </div>
+      <div id="show-image">
+        <img class="show-image" src="static/custom/logo-main.png" alt="Show Logo">
+      </div>
+      <div id="show-player" class="row">
+        <audio id="audio" preload="none" controls>
+          <source id="audioSource" src="#" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+      </div>
+    </header>
+  </div>
+  <footer class="container-fluid footer">
+      <div class="navbar-left">
+            <a href="https://facebook.com/URY1350" target="_blank">
+                <i class="fa fa-facebook-official fa-2x" aria-hidden="true"></i>
+            </a>
+            <a href="https://twitter.com/URY1350" target="_blank">
+                <i class="fa fa-twitter fa-2x" aria-hidden="true"></i>
+            </a>
+            <a href="https://youtube.com/c/URY1350" target="_blank">
+                <i class="fa fa-youtube fa-2x" aria-hidden="true"></i>
+            </a>
+            <a href="https://mixcloud.com/URY1350" target="_blank">
+                <i class="fa fa-mixcloud fa-2x" aria-hidden="true"></i>
+            </a>
+      </div>
+      <div class="navbar-right">
+        <p>Copyright &copy; 1967-2020 <a href="https://ury.org.uk" target="_blank">University Radio York</a><br>Designed by the <a href="mailto:webmaster@ury.org.uk" title="Click to email the Computing team.">URY Computing Team</a>
+        <br><a href="https://www.york.ac.uk/docs/disclaimer/disclaimer.htm" target="_blank">Disclaimer</a></p>
+      </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  <script>
+    window.APIKey = {{.APIKey}}
+  </script>
+  <script src="static/rewind.js"></script>
+  </body>
+</html>

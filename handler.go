@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io"
 	"log"
 	"math"
@@ -11,7 +12,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/UniversityRadioYork/time-machine/shows"
+	"github.com/UniversityRadioYork/TimeMachine/shows"
 	"github.com/gorilla/mux"
 	"github.com/tcolgate/mp3"
 )
@@ -20,20 +21,35 @@ type HandlerContext struct {
 	ShowProvider shows.ShowProvider
 }
 
+type PageData struct {
+	PageTitle string
+	APIKey    string
+}
+
+func (h *HandlerContext) HandleUIRoot(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("ui/root.tmpl"))
+	data := PageData{
+		PageTitle: "URYPlayer Rewind",
+		APIKey:    "rewind",
+	}
+	tmpl.Execute(w, data)
+
+}
+
 func (h *HandlerContext) HandleGetShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, err := strconv.ParseUint(vars["id"], 10, 32)
+	startTime, err := strconv.ParseUint(vars["startTime"], 10, 32) // In hours since epoch
 	if err != nil {
 		w.WriteHeader(400)
-		w.Write([]byte("TM001 invalid id"))
+		w.Write([]byte("TM001 invalid startTime"))
 		return
 	}
 
-	show, err := h.ShowProvider.GetShow(uint(id))
+	show, err := h.ShowProvider.GetShow(uint(startTime))
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(500)
-		w.Write([]byte("TM510 something exploded!"))
+		w.Write([]byte("TM501 something exploded!"))
 		return
 	}
 
@@ -42,7 +58,14 @@ func (h *HandlerContext) HandleGetShow(w http.ResponseWriter, r *http.Request) {
 
 	var playable float64
 	if available {
-		file, err := os.Open(fmt.Sprintf("show_data/%d.mp3", show.ID))
+		var filename string
+		if show.ID != 0 {
+			filename = "timeslotid-" + fmt.Sprint(show.ID)
+		} else {
+			filename = "hour-" + fmt.Sprint(show.StartTime.Unix()/SECONDS_IN_HOUR)
+		}
+
+		file, err := os.Open(fmt.Sprintf("show_data/%s.mp3", filename))
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(500)
@@ -83,14 +106,14 @@ func (h *HandlerContext) HandleGetShow(w http.ResponseWriter, r *http.Request) {
 
 func (h *HandlerContext) HandleGetShowStream(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, err := strconv.ParseUint(vars["id"], 10, 32)
+	startTime, err := strconv.ParseUint(vars["startTime"], 10, 32) // In hours since epoch
 	if err != nil {
 		w.WriteHeader(400)
-		w.Write([]byte("TM001 invalid id"))
+		w.Write([]byte("TM001 invalid startTime"))
 		return
 	}
 
-	show, err := h.ShowProvider.GetShow(uint(id))
+	show, err := h.ShowProvider.GetShow(uint(startTime))
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(500)
@@ -115,7 +138,14 @@ func (h *HandlerContext) HandleGetShowStream(w http.ResponseWriter, r *http.Requ
 		}
 	}
 
-	showFile, err := os.OpenFile(fmt.Sprintf("show_data/%d.mp3", show.ID), os.O_RDONLY, 0)
+	var filename string
+	if show.ID != 0 {
+		filename = "timeslotid-" + fmt.Sprint(show.ID)
+	} else {
+		filename = "hour-" + fmt.Sprint(show.StartTime.Unix()/SECONDS_IN_HOUR)
+	}
+
+	showFile, err := os.OpenFile(fmt.Sprintf("show_data/%s.mp3", filename), os.O_RDONLY, 0)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(500)
@@ -157,11 +187,33 @@ func (h *HandlerContext) HandleGetShowStream(w http.ResponseWriter, r *http.Requ
 	w.Header().Set("Accept-Ranges", "none")
 	w.Header().Del("Content-Length")
 	w.Header().Set("Cache-Control", "no-cache, no-store")
+
+	BUFFERSIZE := 1024
+	buf := make([]byte, BUFFERSIZE)
+	attempt := 0
 	for {
-		_, err = io.Copy(w, showFile)
-		if err != nil {
-			log.Printf("handler: io.Copy error %v\n", err)
+		n, err := showFile.Read(buf)
+		if err != nil && err != io.EOF {
+			return //err
+		}
+		if n == 0 {
+			// There's no new bytes now, but there be some new
+			if attempt > 4 {
+				// Attempts to get new bytes from the file failed.
+				// Likely means the recording has finished.
+				fmt.Println("Reached end of recording.")
+				return
+			}
+
+			attempt = attempt + 1
+			time.Sleep(1 * time.Second)
+			continue
+		}
+
+		if _, err := w.Write(buf[:n]); err != nil {
+			fmt.Println("Client probably went away")
 			return
 		}
+		attempt = 0
 	}
 }
